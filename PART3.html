@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- ==========================================
+       Part 3: SEO Meta Tags & Header Optimization
+       ========================================== -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Affordable Nike bags sold by students, for students. Browse authentic campus backpacks, duffel bags, and student deals at Swoosh Student Hub.">
+  <meta name="keywords" content="Nike bags, student deals, campus backpacks, affordable Nike gear, student store">
+  <meta name="author" content="Student Campus Store">
+  <title>Swoosh Student Hub | Exclusive Nike Bags & Deals</title>
+
+  <!-- External Map Library CSS (Leaflet.js) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+  <!-- Embedded CSS Stylesheet -->
+  <style>
+    /* Global & Typography Styles */
+    :root {
+      --primary-color: #111111;
+      --accent-color: #f35b04;
+      --bg-light: #f5f5f5;
+      --card-bg: #ffffff;
+      --text-color: #333333;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: var(--text-color);
+      background-color: var(--bg-light);
+    }
+
+    /* Header & Navigation Bar */
+    .site-header {
+      background-color: var(--primary-color);
+      color: #fff;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .site-header .logo h1 {
+      font-size: 1.8rem;
+      color: var(--accent-color);
+    }
+
+    .navbar ul {
+      display: flex;
+      list-style: none;
+      gap: 1.5rem;
+    }
+
+    .navbar a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3rem;
+    }
+
+    .navbar a:hover {
+      color: var(--accent-color);
+    }
+
+    /* Main Container & Layout */
+    main {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+
+    section {
+      background: var(--card-bg);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    h2 {
+      margin-bottom: 1rem;
+      border-bottom: 2px solid var(--accent-color);
+      display: inline-block;
+      padding-bottom: 0.3rem;
+    }
+
+    /* Hero Section */
+    .hero {
+      text-align: center;
+      padding: 3rem 1rem;
+      background: linear-gradient(135deg, #111, #333);
+      color: white;
+      border-radius: 8px;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-block;
+      background: var(--accent-color);
+      color: white;
+      padding: 0.6rem 1.2rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+
+    .btn:hover {
+      background: #d44d00;
+    }
+
+    /* Filter & Search Bar */
+    .filter-controls {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-controls input, .filter-controls select {
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      flex: 1;
+      min-width: 200px;
+    }
+
+    /* Product Grid & Cards */
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .product-card {
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 1rem;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.2s;
+    }
+
+    .product-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .product-card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .product-card h3 {
+      margin: 0.8rem 0 0.4rem;
+    }
+
+    .product-card .price {
+      font-weight: bold;
+      color: var(--accent-color);
+      font-size: 1.2rem;
+    }
+
+    /* Cart Summary Section */
+    .cart-summary {
+      background: var(--primary-color);
+      color: white;
+      text-align: center;
+    }
+
+    /* Forms Section */
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.3rem;
+      font-weight: 600;
+    }
+
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%;
+      padding: 0.6rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .error-text {
+      color: red;
+      font-size: 0.85rem;
+      margin-top: 0.2rem;
+    }
+
+    /* Lightbox Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal-overlay img {
+      max-width: 90%;
+      max-height: 80vh;
+      border-radius: 8px;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      color: white;
+      font-size: 2rem;
+      cursor: pointer;
+    }
+
+    /* Footer */
+    .site-footer {
+      background: var(--primary-color);
+      color: white;
+      text-align: center;
+      padding: 1.5rem;
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==========================================
+       Part 1: Header & Navigation Section
+       ========================================== -->
+  <header class="site-header">
+    <div class="logo">
+      <h1>Swoosh Hub</h1>
+      <p>Student Nike Store</p>
+    </div>
+    <nav class="navbar" aria-label="Main Navigation">
+      <ul>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#products">Catalog</a></li>
+        <li><a href="#enquiry">Enquiry Form</a></li>
+        <li><a href="#contact">Contact & Map</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- ==========================================
+       Main Content Section
+       ========================================== -->
+  <main>
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+      <h2>Campus Ready Nike Gear</h2>
+      <p>Get authentic Nike backpacks and gym bags at exclusive student rates.</p>
+      <a href="#products" class="btn" style="margin-top: 1rem;">Shop Collection</a>
+    </section>
+
+    <!-- Dynamic Cart Total Display -->
+    <section class="cart-summary">
+      <h3>Cart Total: <span id="cart-count">0</span> items (<span id="cart-total">R 0.00</span>)</h3>
+    </section>
+
+    <!-- Part 2.2: Dynamic Search, Sorting & Product Cards -->
+    <section id="products">
+      <h2>Featured Nike Bags</h2>
+
+      <!-- Search & Sorting Controls -->
+      <div class="filter-controls">
+        <input type="text" id="searchInput" placeholder="Search bags..." oninput="filterAndSortProducts()">
+        <select id="sortSelect" onchange="filterAndSortProducts()">
+          <option value="default">Sort by: Default</option>
+          <option value="low-high">Price: Low to High</option>
+          <option value="high-low">Price: High to Low</option>
+        </select>
+      </div>
+
+      <!-- Container where JavaScript populates products dynamically -->
+      <div id="product-grid" class="product-grid"></div>
+    </section>
+
+    <!-- Part 4: Interactive Enquiry Form -->
+    <section id="enquiry" class="form-section">
+      <h2>Product & Service Enquiry Form</h2>
+      <p>Inquire about bag availability, costs, or student volunteering opportunities.</p>
+
+      <form id="enquiryForm" onsubmit="handleEnquirySubmit(event)">
+        <div class="form-group">
+          <label for="fullName">Full Name:</label>
+          <input type="text" id="fullName" placeholder="Enter full name">
+          <div id="nameError" class="error-text"></div>
+        </div>
+
+        <div class="form-group">
+          <label for="studentEmail">Student Email (.ac.za / .edu):</label>
+          <input type="email" id="studentEmail" placeholder="student@university.ac.za">
+          <div id="emailError" class="error-text"></div>
+        </div>
+
+        <div class="form-group">
+          <label for="enquiryType">Enquiry Type:</label>
+          <select id="enquiryType">
+            <option value="Product Stock & Pricing">Product Stock & Pricing</option>
+            <option value="Student Volunteer Program">Student Volunteer Program</option>
+            <option value="Sponsorship Enquiry">Sponsorship Enquiry</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="message">Message:</label>
+          <textarea id="message" rows="4" placeholder="Type your query here..."></textarea>
+        </div>
+
+        <button type="submit" class="btn">Submit Enquiry</button>
+      </form>
+      <div id="enquirySuccess" style="margin-top: 1rem; color: green; font-weight: bold;"></div>
+    </section>
+
+    <!-- Part 2.1 & 4: Contact Form & Interactive Map (Leaflet.js) -->
+    <section id="contact">
+      <h2>Campus Pickup Point & Contact</h2>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+
+        <!-- Contact Form (Compiles Email) -->
+        <div>
+          <h3>Direct Message</h3>
+          <form id="contactForm" onsubmit="handleContactSubmit(event)">
+            <div class="form-group">
+              <label for="contactName">Name:</label>
+              <input type="text" id="contactName" required minlength="3">
+            </div>
+            <div class="form-group">
+              <label for="contactMsg">Message:</label>
+              <textarea id="contactMsg" rows="4" required></textarea>
+            </div>
+            <button type="submit" class="btn">Send Email</button>
+          </form>
+        </div>
+
+        <!-- Interactive Map Element -->
+        <div>
+          <h3>Student Center Pickup Map</h3>
+          <div id="map" style="height: 250px; width: 100%; border-radius: 8px;"></div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- Image Lightbox Modal Overlay -->
+  <div id="lightbox" class="modal-overlay" onclick="closeLightbox()">
+    <span class="modal-close">&times;</span>
+    <img id="lightboxImg" src="" alt="Enlarged Bag Image">
+  </div>
+
+  <!-- Footer Section -->
+  <footer class="site-footer">
+    <p>&copy; 2026 Swoosh Student Hub. All rights reserved.</p>
+    <p>Student Entrepreneurship Project</p>
+  </footer>
+
+  <!-- ==========================================
+       Part 3 & 4: JavaScript Logic Script
+       ========================================== -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    // ----------------------------------------------------
+    // 1. Dynamic Catalog Product Data (Part 2.2)
+    // ----------------------------------------------------
+    const products = [
+      {
+        id: 1,
+        name: "Nike Heritage Backpack",
+        price: 450.00,
+        desc: "Spacious main compartment with internal laptop sleeve. Ideal for campus.",
+        image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500",
+        alt: "Nike Heritage Backpack image"
+      },
+      {
+        id: 2,
+        name: "Nike Brasilia Duffel",
+        price: 650.00,
+        desc: "Durable water-resistant bottom layer with dedicated shoe compartment.",
+        image: "https://images.unsplash.com/photo-1544816155-12df9643f363?w=500",
+        alt: "Nike Brasilia Duffel bag image"
+      },
+      {
+        id: 3,
+        name: "Nike Essentials Crossbody",
+        price: 320.00,
+        desc: "Compact design with multiple zipper pockets for phone, keys, and cards.",
+        image: "https://images.unsplash.com/photo-1622560480605-d83c853bc5c3?w=500",
+        alt: "Nike Essentials Crossbody bag image"
+      }
+    ];
+
+    // ----------------------------------------------------
+    // 2. Dynamic Content Rendering & Search/Sort Filters
+    // ----------------------------------------------------
+    function displayProducts(items) {
+      const container = document.getElementById("product-grid");
+      container.innerHTML = "";
+
+      if (items.length === 0) {
+        container.innerHTML = "<p>No bags matched your search term.</p>";
+        return;
+      }
+
+      items.forEach(product => {
+        const card = document.createElement("article");
+        card.className = "product-card";
+        card.innerHTML = `
+          <img src="${product.image}" alt="${product.alt}" onclick="openLightbox('${product.image}')">
+          <h3>${product.name}</h3>
+          <p class="price">R ${product.price.toFixed(2)}</p>
+          <p>${product.desc}</p>
+          <button class="btn" style="margin-top: 0.8rem;" onclick="addToCart('${product.name}', ${product.price})">Add to Cart</button>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function filterAndSortProducts() {
+      const query = document.getElementById("searchInput").value.toLowerCase();
+      const sortType = document.getElementById("sortSelect").value;
+
+      let filtered = products.filter(item => 
+        item.name.toLowerCase().includes(query) || item.desc.toLowerCase().includes(query)
+      );
+
+      if (sortType === "low-high") {
+        filtered.sort((a, b) => a.price - b.price);
+      } else if (sortType === "high-low") {
+        filtered.sort((a, b) => b.price - a.price);
+      }
+
+      displayProducts(filtered);
+    }
+
+    // ----------------------------------------------------
+    // 3. Image Lightbox View (Part 2.1)
+    // ----------------------------------------------------
+    function openLightbox(imgSrc) {
+      document.getElementById("lightboxImg").src = imgSrc;
+      document.getElementById("lightbox").style.display = "flex";
+    }
+
+    function closeLightbox() {
+      document.getElementById("lightbox").style.display = "none";
+    }
+
+    // ----------------------------------------------------
+    // 4. Dynamic Cart Logic
+    // ----------------------------------------------------
+    let cartCount = 0;
+    let cartTotal = 0;
+
+    function addToCart(bagName, price) {
+      cartCount++;
+      cartTotal += price;
+
+      document.getElementById("cart-count").innerText = cartCount;
+      document.getElementById("cart-total").innerText = `R ${cartTotal.toFixed(2)}`;
+
+      alert(`${bagName} has been added to your cart!`);
+    }
+
+    // ----------------------------------------------------
+    // 5. JavaScript Form Validation & AJAX Simulation (Part 4)
+    // ----------------------------------------------------
+    function handleEnquirySubmit(event) {
+      event.preventDefault();
+
+      const nameVal = document.getElementById("fullName").value.trim();
+      const emailVal = document.getElementById("studentEmail").value.trim();
+      const enquiryType = document.getElementById("enquiryType").value;
+      
+      const nameError = document.getElementById("nameError");
+      const emailError = document.getElementById("emailError");
+      const successMsg = document.getElementById("enquirySuccess");
+
+      let isValid = true;
+      nameError.innerText = "";
+      emailError.innerText = "";
+      successMsg.innerText = "";
+
+      // Name length validation
+      if (nameVal.length < 3) {
+        nameError.innerText = "Please enter a valid full name (at least 3 characters).";
+        isValid = false;
+      }
+
+      // Student Email Validation (.ac.za or .edu)
+      if (!emailVal.includes("@") || (!emailVal.endsWith(".ac.za") && !emailVal.endsWith(".edu"))) {
+        emailError.innerText = "Please enter a valid student email ending in .ac.za or .edu";
+        isValid = false;
+      }
+
+      // Simulated AJAX Submission Response
+      if (isValid) {
+        successMsg.innerText = `Thank you, ${nameVal}! Your enquiry regarding '${enquiryType}' has been processed. Pricing/availability details have been dispatched to ${emailVal}.`;
+        document.getElementById("enquiryForm").reset();
+      }
+    }
+
+    function handleContactSubmit(event) {
+      event.preventDefault();
+      const name = document.getElementById("contactName").value;
+      const msg = document.getElementById("contactMsg").value;
+
+      // Compiles details into a mailto link
+      const mailLink = `mailto:support@swooshstudenthub.ac.za?subject=Contact Form Message&body=Name: ${encodeURIComponent(name)}%0D%0AMessage: ${encodeURIComponent(msg)}`;
+      window.location.href = mailLink;
+    }
+
+    // ----------------------------------------------------
+    // 6. Interactive Map Initialization (Leaflet.js)
+    // ----------------------------------------------------
+    document.addEventListener("DOMContentLoaded", () => {
+      // Render Initial Catalog
+      displayProducts(products);
+
+      // Initialize Leaflet Map
+      const map = L.map('map').setView([-26.1929, 28.0306], 15);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+
+      L.marker([-26.1929, 28.0306]).addTo(map)
+        .bindPopup('<b>Swoosh Student Hub</b><br>Campus Student Center Pickup Point.')
+        .openPopup();
+    });
+  </script>
+</body>
+</html>
